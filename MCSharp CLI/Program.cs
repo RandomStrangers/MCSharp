@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MCSharp.Heartbeat;
+using System;
 
 
 namespace MCSharp.CLI
@@ -30,7 +31,15 @@ namespace MCSharp.CLI
                 Logger.OnLog += Log;
                 server.OnSettingsUpdate += SettingsUpdate;
                 server.Start();
+
                 server.ParseInput();
+                bool sendhb = true;
+                while (sendhb)
+                {
+                    new ClassiCubeBeat();
+                    MinecraftHeartbeat.Init();
+                    WOMHeartbeat.Init();
+                }
             }
             catch (Exception e)
             {

@@ -7,36 +7,19 @@ using System.Threading;
 
 namespace MCSharp.Heartbeat
 {
-    public class MinecraftHeartbeat : Heartbeat
+    public class WOMHeartbeat : Heartbeat
     {
-        
-        public static int MissedBeats { get { return Instance.Attempts; } }
-
         static BackgroundWorker worker;
-
-        static MinecraftHeartbeat instance;
-        public static MinecraftHeartbeat Instance
-        {
-            get
-            {
-                if (instance == null)
-                {
-                    Init();
-                }
-                return instance;
-            }
-
-            set { instance = value; }
-        }
-        
+        static WOMHeartbeat instance;
         static string _hash = null;
         static string externalURL = "";
         public static string Hash { get { return _hash; } }
 
         public static void Init ()
         {
+            if (instance == null)
             {
-                instance = new MinecraftHeartbeat();
+                instance = new WOMHeartbeat();
                 worker = new BackgroundWorker();
                 worker.DoWork += new DoWorkEventHandler(worker_DoWork);
                 worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(worker_RunWorkerCompleted);
@@ -54,10 +37,10 @@ namespace MCSharp.Heartbeat
             worker.RunWorkerAsync();
         }
 
-        public MinecraftHeartbeat ()
+        public WOMHeartbeat ()
         {
             _timeout = 3000; // Beat every 3 seconds
-            serverURL = "http://www.classicube.net/heartbeat.jsp";
+            serverURL = "https://www.classicube.net/heartbeat.jsp";
             staticPostVars = "port=" + Properties.ServerPort +
                              "&max=" + Properties.MaxPlayers +
                              "&name=" + Uri.EscapeDataString(Properties.ServerName) +
@@ -69,9 +52,6 @@ namespace MCSharp.Heartbeat
 
         void UpdateHeartBeatPostVars ()
         {
-            string rndchars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-            Random rnd = new Random();
-            for (int i = 0; i < 16; ++i) { Server.salt += rndchars[rnd.Next(rndchars.Length)]; }
             postVars = staticPostVars;
             postVars += "&users=" + (Player.number);
             postVars += "&salt=" + Uri.EscapeDataString(Server.salt);
@@ -79,9 +59,6 @@ namespace MCSharp.Heartbeat
 
         public bool DoHeartBeat ()
         {
-            // Increment the attempts
-            _attempts++;
-
             bool success = false;
             byte[] formData = { };
 
@@ -128,12 +105,7 @@ namespace MCSharp.Heartbeat
                     using (StreamReader responseReader = new StreamReader(response.GetResponseStream()))
                     {
                         string line = responseReader.ReadToEnd().Trim();
-                        _hash = line.Substring(line.LastIndexOf('/') + 1);
-                        externalURL = line;
-                        File.WriteAllText("externalurl.txt", externalURL);
-
-                        // We have success, write to the file!
-                        _attempts = 0;
+                        File.WriteAllText("womurl.txt", line);
                         Logger.Log(line, LogType.Debug);
                     }
                 }
@@ -142,8 +114,8 @@ namespace MCSharp.Heartbeat
             {
                 if (ex.Status == WebExceptionStatus.Timeout)
                 {
-                    Logger.Log("Timeout: minecraft.net", LogType.Debug);
-                    Logger.Log("Heartbeat Timed out: The classicube.net website is probably down", LogType.Error);
+                    Logger.Log("Timeout: classicube.net", LogType.Debug);
+                    Logger.Log("WOM_ClassiCube Heartbeat Timed out", LogType.Error);
                     Logger.Log(ex.Message, LogType.ErrorMessage);
                 }
                 else
@@ -157,7 +129,7 @@ namespace MCSharp.Heartbeat
                             Logger.Log(externalURL, LogType.ErrorMessage);
                         }
                     }
-                    Logger.Log("Failed Heartbeat to classicube.net: The status was " + ex.Status.ToString(), LogType.Error);
+                    Logger.Log("Failed Heartbeat classicube.net: The status was " + ex.Status.ToString(), LogType.Error);
                     Logger.Log(ex.Message, LogType.ErrorMessage);
                 }
             }

@@ -4,10 +4,14 @@ using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
+using System.Security.Policy;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+
+
 using MCSharp;
 using MCSharp.Heartbeat;
 
@@ -37,13 +41,16 @@ namespace MCSharp_GUI
 
         private void UpdateUrlTextbox(string url)
         {
-            externalURLTextbox.Text = url;
-            playNowButton.Enabled = true;
+                string url2 = File.ReadAllText("ccexternalurl.txt");
+                externalURLTextbox.Text = url2;
+                playNowButton.Enabled = true;
         }
 
         private void PCTimer_Tick(object sender, EventArgs e)
         {
             MemoryStatusLabel.Text = Math.Round((double)Environment.WorkingSet / 1048576).ToString() + "MB";
+            string url = File.ReadAllText("ccexternalurl.txt");
+            UpdateUrl(url);
             if (Math.Round((double)Environment.WorkingSet / 1048576) > 2048)
             {
                 thisProcess.Kill();
@@ -55,28 +62,20 @@ namespace MCSharp_GUI
                 serverStatusLabel.BackColor = Color.Red;
                 serverStatusLabel.Text = "Heartbeat Error!";
             }
-             else if (MinecraftHeartbeat.Hash != null)
-            {
-              serverStatusLabel.BackColor = Color.Green;
-            serverStatusLabel.Text = "Heartbeat OK!";
-            }
-            }
-            // Update heartbeat 
-            /* if (ClassiCubeBeat.MissedBeats > 4)
-            {
-                serverStatusLabel.BackColor = Color.Red;
-                serverStatusLabel.Text = "Heartbeat Error!";
-            }
-            else if (ClassiCubeBeat.Hash != null)
+            else if (MinecraftHeartbeat.Hash != null)
             {
                 serverStatusLabel.BackColor = Color.Green;
                 serverStatusLabel.Text = "Heartbeat OK!";
             }
+            {
+                updateAvailableLabel.DisplayStyle = ToolStripItemDisplayStyle.None;
+            }
         }
-            */
+
         private void FileExitMenu_Click(object sender, EventArgs e)
         {
-            this.Close();
+            //this.Close(); // Doesn't actually close it on windows, just minimizes it.
+            Environment.FailFast("Shutting down!");
         }
 
         private void mainForm_Load(object sender, EventArgs e)
@@ -189,6 +188,13 @@ namespace MCSharp_GUI
         {
             Thread.Sleep(1000);
             server.Start();
+            bool sendhb = true;
+            while (sendhb)
+            {
+                new ClassiCubeBeat();
+                MinecraftHeartbeat.Init();
+                WOMHeartbeat.Init();
+            }
         }
 
         private void autoScrollCheckbox_CheckedChanged(object sender, EventArgs e)

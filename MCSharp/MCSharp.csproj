@@ -57,7 +57,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>..\bin\debug\</OutputPath>
+    <OutputPath>..\bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
@@ -82,11 +82,7 @@
   </Target>
   -->
   <ItemGroup>
-    <Compile Include="Added\CmdSay2.cs" />
-    <Compile Include="Added\CmdShutdown.cs" />
-    <Compile Include="Added\CmdShutdown2.cs" />
-    <Compile Include="Added\Program.cs" />
-    <Compile Include="Added\Properties.cs" />
+    <Compile Include="Commands\Administrative\CmdShutdown.cs" />
     <Compile Include="Commands\Block\CmdCopy.cs" />
     <Compile Include="Commands\Block\CmdPaste.cs" />
     <Compile Include="Global\BlockBuffer.cs" />
@@ -97,10 +93,9 @@
     <Compile Include="Global\SolidType.cs" />
     <Compile Include="Global\ThreadedBindingList.cs" />
     <Compile Include="Global\UndoBuffer.cs" />
-    <Compile Include="Added\Heartbeat1\ClassiCubeBeat.cs" />
-    <Compile Include="Added\Heartbeat1\Heart.cs" />
-    <Compile Include="Added\Heartbeat1\IBeat.cs" />
-    <Compile Include="Added\Heartbeat1\WOMHeartbeat.cs" />
+    <Compile Include="Heartbeat\CCHearbeat2.cs" />
+    <Compile Include="Heartbeat\Ibeat.cs" />
+    <Compile Include="Heartbeat\WOMHeartbeat.cs" />
     <Compile Include="Heartbeat\Heartbeat.cs" />
     <Compile Include="Heartbeat\MinecraftHeartbeat.cs" />
     <Compile Include="World\Map.Physics.cs" />
@@ -251,6 +246,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>.\System.Data.SQLite.DLL</HintPath>
     </Reference>
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.XML" />
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>

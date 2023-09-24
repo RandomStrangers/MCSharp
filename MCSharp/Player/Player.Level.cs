@@ -232,7 +232,7 @@ namespace MCSharp
             switch (BlockAction)
             {
                 case 0:     //normal
-                    if (level.Physics == Physics.Off)
+                    if (level.Physics != Physics.Off)
                     {
                         switch (newBlockType)
                         {

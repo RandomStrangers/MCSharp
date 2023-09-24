@@ -13,34 +13,9 @@ namespace MCSharp
 {
     public class Server
     {
-        public delegate void MessageEventHandler(string message);
-        public event MessageEventHandler OnURLChange;
-        // URL hash for connecting to the server
-        public static string Hash = "";
-        public static string CCURL = string.Empty;
-        public static string URL = string.Empty;
-        /// <summary>
-        /// SoftwareName2 and SoftwareNameVersioned2 are for Betacraft heartbeats 
-        /// since BetaCraft doesn't allow MCLawl to connect using its default SoftwareName.
-        /// </summary>
-        public const string InternalVersion = "1.01";
-        public static string Version { get { return InternalVersion; } }
-
-        
-
-        public static string SoftwareName = "MCSharp";
-        static string fullName;
-        public static string SoftwareNameVersioned
-        {
-            // By default, if SoftwareName gets externally changed, that is reflected in SoftwareNameVersioned too
-            get { return fullName ?? SoftwareName + " " + Version; }
-            set { fullName = value; }
-        }
-        public static string salt = "";
-        public void UpdateCCUrl(string ccurl)
-        {
-            if (OnURLChange != null) OnURLChange(ccurl);
-        }
+        // Server Version String
+        public static double VersionNumber { get { return 0.94; } }
+        public static double LatestVersion = VersionNumber;
 
         /// <summary>
         /// Used to
@@ -54,7 +29,19 @@ namespace MCSharp
         static System.Timers.Timer messageTimer = new System.Timers.Timer(60000 * 5);   //Every 5 mins
 
         static Thread physThread;
+        public const string InternalVersion = "0.94";
+        public static string Version { get { return InternalVersion; } }
 
+
+
+        public static string SoftwareName = "MCSharp";
+        static string fullName;
+        public static string SoftwareNameVersioned
+        {
+            // By default, if SoftwareName gets externally changed, that is reflected in SoftwareNameVersioned too
+            get { return fullName ?? SoftwareName + " " + Version; }
+            set { fullName = value; }
+        }
         /// <summary>
         /// Player Lists
         /// </summary>
@@ -93,12 +80,25 @@ namespace MCSharp
 
         public static List<string> jokerMessages = new List<string>();
 
+        public static string salt = "";
 
         public static Server s;
+        public static string CCURL = string.Empty;
 
         private bool running = false;
 
         // Constructor
+        class Program
+        {
+            static void Main()
+            {
+                int x = 0;
+                while (true)
+                {
+                    x++;
+                }
+            }
+        }
         public Server ()
         {
             Server.s = this;
@@ -106,43 +106,39 @@ namespace MCSharp
 
         public void Start ()
         {
+            if (!File.Exists("ccexternalurl.txt"))
+            {
+                File.Create("ccexternalurl.txt");
+            }
+
             Logger.Log("Starting Server");
             running = true;
             Logger.Log("Doing sanity checks");
 
 
-            if (SanityCheck())
-            {
+            //if (SanityCheck())
+           // {
                 Logger.Log("Sanity Checks Passed");
                 Properties.Load();
 
                 if (File.Exists("lastseen.xml"))
-                    Server.LoadLastSeen();  //Added by bman
-
-                if (Properties.ServerOwner != String.Empty)
                 {
+                    Server.LoadLastSeen();  //Added by bman
+                 }
                     Thread.Sleep(100);
 
                     SetupRanks();
                     SetupLevels();
 
-                    if (!SetupNetwork())
-                        return;
+                    SetupNetwork();
 
                     SetupGeneral();
                     SetupIRC();
 
                     // Init Heartbeat
-                    ClassiCubeBeat.Init();
+                    new ClassiCubeBeat();
                     MinecraftHeartbeat.Init();
-                  //  WomHeartbeat.Init();
-
-
-                    // No longer going to be served. Probably should only be done at very rare intervals anyways
-                    //MCSharpUpdateHeartbeat.Init();
-
-
-
+                    WOMHeartbeat.Init();
                     // Init physics
                     physThread = new Thread(new ThreadStart(doPhysics));
                     physThread.Start();
@@ -151,14 +147,10 @@ namespace MCSharp
                     new AutoSaver(Properties.BackupInterval);
 
                     // Check the port forward status
-                    doPortCheck();
-                }
-                else
-                {
-                    Logger.Log("Error! No Administrator set in the server.properties", LogType.FatalError);
-                }
-            }
+                   // doPortCheck();
+            //}
         }
+
         public void Stop ()
         {
             BindingList<Player> kickList = Player.players;
@@ -176,6 +168,8 @@ namespace MCSharp
 
             // End running
             running = false;
+            Environment.Exit(0);
+
         }
 
         #region === SETUP ===
@@ -263,9 +257,9 @@ namespace MCSharp
             {
                 path = Path.GetFullPath(path);
                 Logger.Log(path, LogType.Debug);
-                FileStream myfile = File.Create("permissiontest.txt");
+                FileStream myfile = File.Create(path + "permissiontest.txt");
                 myfile.Close();
-                File.Delete("permissiontest.txt");
+                File.Delete(path + "permissiontest.txt");
                 /*FileIOPermission writePermission = new FileIOPermission(FileIOPermissionAccess.AllAccess, path);
                 if (!SecurityManager.IsGranted(writePermission))
                 {
@@ -552,13 +546,12 @@ namespace MCSharp
                         else
                         {
                             portOpen = true;
-                            Logger.Log("Port " + Properties.ServerPort + " is open!");
+                            Logger.Log("Port " + Properties.ServerPort + " is closed. You will need to set up forwarding.", LogType.Warning);
                         }
                     }
                 }
                 else
                 {
-                    portOpen = true;
                     Logger.Log("Port check did not complete. Please try again.", LogType.Warning);
                 }
 
@@ -591,7 +584,7 @@ namespace MCSharp
             }
         }
 
-        public static void ForceExit ()
+        public static void ForceExit()
         {
             foreach (var player in Player.players)
             {
@@ -607,7 +600,9 @@ namespace MCSharp
             if (process != null)
             {
                 Logger.Log("Killing Process...", LogType.Error);
-                process.Kill();
+                //process.Kill();
+                Environment.FailFast("Shutting down!");
+
             }
 
         }

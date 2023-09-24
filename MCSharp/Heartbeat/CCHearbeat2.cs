@@ -1,5 +1,5 @@
-/*
-    Copyright 2012 MCLawl
+﻿/*
+    Copyright 2012 MCForge
  
     Dual-licensed under the	Educational Community License, Version 2.0 and
     the GNU General Public License, Version 3 (the "Licenses"); you may
@@ -15,49 +15,21 @@
     or implied. See the Licenses for the specific language governing
     permissions and limitations under the Licenses.
  */
-using MCSharp.Heartbeat;
+using MCSharp;
 using System;
-using System.ComponentModel;
+using System.Collections.Generic;
 using System.IO;
+using System.Security.Policy;
+using System.ComponentModel;
+using System.Net;
+using System.Text;
 using System.Threading;
-using static MCSharp.Player;
 namespace MCSharp
 {
     public sealed class ClassiCubeBeat : IBeat
     {
-        public int Attempts { get { return _attempts; } }
-        protected int _attempts = 0;
-        public static int MissedBeats { get { return Instance.Attempts; } }
-
-        static BackgroundWorker worker;
         public bool UrlSaid = false;
-
-        static ClassiCubeBeat instance;
-        public static ClassiCubeBeat Instance
-        {
-            get
-            {
-                if (instance == null)
-                {
-                    Init();
-                }
-                return instance;
-            }
-
-            set { instance = value; }
-        }
-
-        static string _hash = null;
-        public static string Hash { get { return _hash; } }
-
-        public static void Init()
-        {
-            if (instance == null)
-            {
-                instance = new ClassiCubeBeat();
-                worker = new BackgroundWorker();
-            }
-        }
+        public HttpWebRequest request;
 
         public string URL
         {
@@ -74,16 +46,13 @@ namespace MCSharp
 
         public string Prepare()
         {
-            // Increment the attempts
-            _attempts++;
-
             return "&port=" + Properties.ServerPort +
                 "&max=" + Properties.MaxPlayers +
                 "&name=" + Uri.EscapeDataString(Properties.ServerName) +
-                "&public=true" +
+                "&public=" + Properties.PublicServer +
                 "&version=7" +
-                 "&users=" + number +
-                "&salt=" + Uri.EscapeDataString(Server.salt) +
+                "&salt=" + Server.salt +
+                "&users=" + Player.number +
                 "&software=" + Server.SoftwareNameVersioned +
                  "&web=true";
 
@@ -97,16 +66,14 @@ namespace MCSharp
                 string newHash = line.Substring(line.LastIndexOf('/') + 1);
 
                 // Run this code if we don't already have a hash or if the hash has changed
-                if (String.IsNullOrEmpty(Server.Hash) || !newHash.Equals(Server.Hash))
+                if (String.IsNullOrEmpty(Server.salt) || !newHash.Equals(Server.salt))
                 {
-                    Server.Hash = newHash;
+
+                    Server.salt = newHash;
                     Server.CCURL = line;
-                    Server.s.UpdateCCUrl(Server.CCURL);
-                    File.WriteAllText("ccexternalurl.txt", Server.CCURL);
-                    if (UrlSaid == false)
+                    File.WriteAllText("ccexternalurl.txt", line);
                     {
-                        Logger.Log("ClassiCube URL found: " + Server.CCURL);
-                        UrlSaid = true;
+                        Logger.Log("ClassiCube URL found: " + line);
                     }
                 }
             }

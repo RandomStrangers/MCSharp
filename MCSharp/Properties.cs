@@ -7,14 +7,14 @@ namespace MCSharp
     public static class Properties
     {
         
-        public static string ServerOwner = "sethbatman05";
-        public static string ServerName = "[MCSharp] Default";
+        public static string ServerAdministrator = "sethbatman05";
+        public static string ServerName = "A new MCSharp Server is born";
         public static string ServerMOTD = "Welcome to my MCSharp server!";
         public static byte MaxPlayers = 12;
         public static byte MaxMaps = 5;
-        public static int ServerPort = 25460;
+        public static int ServerPort = 24683;
         public static bool PublicServer = true;
-        public static bool VerifyNames = true;
+        public static bool VerifyNames = false;
         public static bool AllowWorldChat = true;
         public static bool GuestGoto = false;
         public static bool DebugEnabled = false;
@@ -40,7 +40,7 @@ namespace MCSharp
 
         // IRC Section
         public static bool IRCEnabled = true;
-        public static int IRCPort = 6697;
+        public static int IRCPort = 6667;
         public static string IRCNick = "MCSharp";
         public static string IRCServer = "irc.esper.net";
         public static string IRCChannel = "#ClassiCube_IRC";
@@ -82,7 +82,7 @@ namespace MCSharp
                             case "server-administrator":
                                 if (ValidString(value, "![]:.,{}~-+()?_/\\ "))
                                 {
-                                    ServerOwner = value;
+                                    ServerAdministrator = value;
                                 }
                                 else
                                 {
@@ -356,7 +356,7 @@ namespace MCSharp
                 w.WriteLine();
                 w.WriteLine("# Server options");
                 w.WriteLine("server-name = " + ServerName);
-                w.WriteLine("server-administrator = " + ServerOwner);
+                w.WriteLine("server-administrator = " + ServerAdministrator);
                 w.WriteLine("motd = " + ServerMOTD);
                 w.WriteLine("port = " + ServerPort.ToString());
                 w.WriteLine("verify-names = " + VerifyNames.ToString().ToLower());

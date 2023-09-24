@@ -29,7 +29,7 @@ namespace MCSharp
                 irc.OnPart += new PartEventHandler(OnPart);
                 irc.OnQuit += new QuitEventHandler(OnQuit);
                 irc.OnNickChange += new NickChangeEventHandler(OnNickChange);
-                irc.OnDisconnected += new EventHandler(OnDisconnected);
+                //irc.OnDisconnected += new EventHandler(OnDisconnected);
                 irc.OnQueryMessage += new IrcEventHandler(OnPrivMsg);
                 irc.OnNames += new NamesEventHandler(OnNames);
                 irc.OnChannelAction += new ActionEventHandler(OnAction);
@@ -71,11 +71,11 @@ namespace MCSharp
         {
             names = e.UserList;
         }
-        void OnDisconnected(object sender, EventArgs e)
-        {
-            try { irc.Connect(server, 6667); }
-            catch (Exception ex) { Console.WriteLine("Failed to reconnect to IRC"); }
-        }
+        //void OnDisconnected(object sender, EventArgs e)
+        //{
+        //    try { irc.Connect(server, 6667); }
+        //    catch (Exception ex) { Console.WriteLine("Failed to reconnect to IRC"); }
+        //}
         // On public channel message
         void OnChanMessage(object sender, IrcEventArgs e)
         {
@@ -93,8 +93,8 @@ namespace MCSharp
             Logger.Log("IRC: " + e.Data.Nick + ": " + temp, LogType.IRCChat);
             Player.GlobalMessage("IRC: &1" + e.Data.Nick + ": &f" + temp);
 
-            Logger.Log("IRC: " + e.Data.Nick + ": " + e.Data.Message);
-           Player.GlobalMessage("IRC: &1" + e.Data.Nick + ": &f" + e.Data.Message);
+            //s.Log("IRC: " + e.Data.Nick + ": " + e.Data.Message);
+            //Player.GlobalMessage("IRC: &1" + e.Data.Nick + ": &f" + e.Data.Message);
         }
         // When someone joins the IRC
         void OnJoin(object sender, JoinEventArgs e)
@@ -130,7 +130,7 @@ namespace MCSharp
                 else
                     msg = "";
 
-                Console.WriteLine(cmd + " : " + msg);
+                //Console.WriteLine(cmd + " : " + msg);
                 Logger.Log(cmd + " : " + msg, LogType.Debug);
                 switch (cmd)
                 {

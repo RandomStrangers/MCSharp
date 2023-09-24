@@ -98,6 +98,10 @@ namespace MCSharp
             else if (Rank >= GroupEnum.Operator)
             {
                 SendMessage("Welcome " + name + "! You rule!");
+                if (Server.LatestVersion > Server.VersionNumber)
+                {
+                    SendMessage("[Console]: &cImportant!!! A MCSharp update is available!!");
+                }
             }
             else
             {
@@ -196,14 +200,12 @@ namespace MCSharp
                         length = 65;
                         break; // chat
                     case 2:
-                       // length = 130;
-                       // break; // login
-                       SMPKick("Please use the Minecraft Classic client to log onto this server!");
+                        SMPKick("Please use the Minecraft Classic client to log onto this server!");
                         return new byte[0];
                     default:
                         // We should see if it's a minecraft smp client trying to log in
                         Kick("Unhandled message id \"" + msg + "\"!");
-                        Kick("Please use the Minecraft Classic client to log onto this server!");
+                        //Kick("Please use the Minecraft Classic client to log onto this server!");
                         return new byte[0];
                 }
 
@@ -279,12 +281,12 @@ namespace MCSharp
 
                 if (Properties.VerifyNames)
                 {
-                    if (verify == "true" || verify != BitConverter.ToString(
+                    if (verify == "--" || verify != BitConverter.ToString(
 
                         MD5.Create().ComputeHash(Encoding.ASCII.GetBytes(Server.salt + name))).
                         Replace("-", "").ToLower().TrimStart('0'))
                     {
-                        if (ip == "127.0.0.1")
+                        if (ip != "127.0.0.1")
                         {
                             Kick("Login failed! Try again."); return;
                         }
@@ -303,7 +305,7 @@ namespace MCSharp
                 }
                 left.Remove(name.ToLower());
 
-                if (Properties.ServerOwner == name)
+                if (Properties.ServerAdministrator == name)
                     group = Group.Find("administrator");
                 else if (Server.bot.Contains(name))
                     group = Group.Find("bots");

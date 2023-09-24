@@ -7,15 +7,12 @@ using System.Threading;
 
 namespace MCSharp.Heartbeat
 {
-    public class MinecraftHeartbeat : Heartbeat
+    public class MCSharpUpdateHeartbeat : Heartbeat
     {
-        
-        public static int MissedBeats { get { return Instance.Attempts; } }
-
         static BackgroundWorker worker;
+        private static MCSharpUpdateHeartbeat instance;
 
-        static MinecraftHeartbeat instance;
-        public static MinecraftHeartbeat Instance
+        public static MCSharpUpdateHeartbeat Instance
         {
             get
             {
@@ -28,15 +25,16 @@ namespace MCSharp.Heartbeat
 
             set { instance = value; }
         }
-        
-        static string _hash = null;
-        static string externalURL = "";
-        public static string Hash { get { return _hash; } }
+
+
+        public bool UpdateAvailable { get { return _updateAvailable; } }
+        private bool _updateAvailable = false;
 
         public static void Init ()
         {
+            if (instance == null)
             {
-                instance = new MinecraftHeartbeat();
+                instance = new MCSharpUpdateHeartbeat();
                 worker = new BackgroundWorker();
                 worker.DoWork += new DoWorkEventHandler(worker_DoWork);
                 worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(worker_RunWorkerCompleted);
@@ -54,43 +52,23 @@ namespace MCSharp.Heartbeat
             worker.RunWorkerAsync();
         }
 
-        public MinecraftHeartbeat ()
+        public MCSharpUpdateHeartbeat ()
         {
-            _timeout = 3000; // Beat every 3 seconds
-            serverURL = "http://www.classicube.net/heartbeat.jsp";
-            staticPostVars = "port=" + Properties.ServerPort +
-                             "&max=" + Properties.MaxPlayers +
-                             "&name=" + Uri.EscapeDataString(Properties.ServerName) +
-                             "&public=" + Properties.PublicServer +
-                             "&version=7" +
-                             "&software=" + Server.SoftwareNameVersioned +
-                             "&web=true";
-        }
-
-        void UpdateHeartBeatPostVars ()
-        {
-            string rndchars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-            Random rnd = new Random();
-            for (int i = 0; i < 16; ++i) { Server.salt += rndchars[rnd.Next(rndchars.Length)]; }
-            postVars = staticPostVars;
-            postVars += "&users=" + (Player.number);
-            postVars += "&salt=" + Uri.EscapeDataString(Server.salt);
+            _timeout = 600000;
+            serverURL = "http://mcsharp.voziv.com/updatecheck.php";
         }
 
         public bool DoHeartBeat ()
         {
-            // Increment the attempts
-            _attempts++;
-
             bool success = false;
             byte[] formData = { };
 
-            UpdateHeartBeatPostVars();
+            postVars = "currentversion=" + Server.VersionNumber;
+
             try
             {
                 request = (HttpWebRequest) WebRequest.Create(new Uri(serverURL));
-                request.Timeout = 20000;
-
+                request.Timeout = 10000;
                 request.Method = "POST";
                 request.ContentType = "application/x-www-form-urlencoded";
                 formData = Encoding.ASCII.GetBytes(postVars);
@@ -125,16 +103,16 @@ namespace MCSharp.Heartbeat
 
                 using (WebResponse response = request.GetResponse())
                 {
+                    Logger.Log("Preparing mcsharp.voziv.com heartbeat.", LogType.Debug);
                     using (StreamReader responseReader = new StreamReader(response.GetResponseStream()))
                     {
-                        string line = responseReader.ReadToEnd().Trim();
-                        _hash = line.Substring(line.LastIndexOf('/') + 1);
-                        externalURL = line;
-                        File.WriteAllText("externalurl.txt", externalURL);
 
-                        // We have success, write to the file!
-                        _attempts = 0;
-                        Logger.Log(line, LogType.Debug);
+                        string line = responseReader.ReadLine();
+                        Server.LatestVersion = Convert.ToDouble(line.Substring(line.LastIndexOf('=') + 1), System.Globalization.CultureInfo.InvariantCulture);
+                        if (Server.LatestVersion > Server.VersionNumber)
+                        {
+                            Logger.Log("MCSHARP UPDATE AVAILABLE (" + Server.LatestVersion + ") Visit http://mcsharp.voziv.com to get it!", LogType.Warning);
+                        }
                     }
                 }
             }
@@ -142,9 +120,8 @@ namespace MCSharp.Heartbeat
             {
                 if (ex.Status == WebExceptionStatus.Timeout)
                 {
-                    Logger.Log("Timeout: minecraft.net", LogType.Debug);
-                    Logger.Log("Heartbeat Timed out: The classicube.net website is probably down", LogType.Error);
-                    Logger.Log(ex.Message, LogType.ErrorMessage);
+                    Logger.Log("Timeout: mcsharp.voziv.com", LogType.Debug);
+                    Logger.Log("MCSharp Heartbeat Timed out!", LogType.Error);
                 }
                 else
                 {
@@ -152,21 +129,20 @@ namespace MCSharp.Heartbeat
                     {
                         using (StreamReader responseReader = new StreamReader(response.GetResponseStream()))
                         {
+
                             string line = responseReader.ReadLine();
                             Logger.Log(line, LogType.ErrorMessage);
-                            Logger.Log(externalURL, LogType.ErrorMessage);
+                            Logger.Log(serverURL, LogType.ErrorMessage);
                         }
                     }
-                    Logger.Log("Failed Heartbeat to classicube.net: The status was " + ex.Status.ToString(), LogType.Error);
+                    Logger.Log("Failed Heartbeat to mcsharp.voziv.com: The status was " + ex.Status.ToString(), LogType.Error);
                     Logger.Log(ex.Message, LogType.ErrorMessage);
                 }
             }
             catch (Exception ex)
             {
-                Logger.Log("Error reporting to classicube.net", LogType.Error);
+                Logger.Log("Error reporting to mcsharp.voziv.com", LogType.Error);
                 Logger.Log(ex.Message, LogType.ErrorMessage);
-                Logger.Log(serverURL, LogType.ErrorMessage);
-                Logger.Log(postVars, LogType.ErrorMessage);
                 success = false;
             }
             finally
