@@ -62,7 +62,7 @@ namespace MCSharp.World
         public const byte door_brick = (byte) 50;
         public const byte door_stone = (byte) 51;
         public const byte door_cobblestone = (byte) 52;
-        public const byte door_rock = (byte)53;
+        //public const byte door_rock = (byte)53;
         public const byte door_grass = (byte) 54;
         public const byte door_dirt = (byte) 55;
         public const byte door_wood = (byte) 56;
@@ -170,7 +170,7 @@ namespace MCSharp.World
         public const byte doorair_brick = (byte) 209;
         public const byte doorair_stone = (byte) 210;
         public const byte doorair_cobblestone = (byte) 211;
-        public const byte doorair_rock = (byte)212;
+        //public const byte doorair_rock = (byte)212;
         public const byte doorair_grass = (byte) 213;
         public const byte doorair_dirt = (byte) 214;
         public const byte doorair_wood = (byte) 215;
@@ -214,7 +214,7 @@ namespace MCSharp.World
 
 
         // The following array is storing door blocks by byte to allow looping over door blocks easily
-        /*public readonly byte[] doorBlocks = {
+        public readonly byte[] doorBlocks = {
                                             door_glass,door_obsidian,door_brick,door_stone,door_cobblestone,0,0,door_white,door_grass,door_dirt,
                                             door_wood,door_shrub,0,door_sand,door_gravel,door_goldrock,door_ironrock,door_coal,door_tree,door_leaf,
                                             door_sponge,door_red,door_orange,door_yellow,door_lightgreen,door_green,door_aquagreen,door_cyan,door_lightblue,
@@ -222,17 +222,17 @@ namespace MCSharp.World
                                             door_redflower,door_mushroom,door_redmushroom,door_goldsolid,door_iron,door_staircasefull,door_staircasestep,
                                             door_tnt,door_bookcase,door_stonevine
                                            };
-        */
-        /*public readonly byte[] doorAirBlocks = {
+
+        public readonly byte[] doorAirBlocks = {
                                             doorair_glass,doorair_obsidian,doorair_brick,doorair_stone,doorair_cobblestone,0,0,doorair_white,doorair_grass,doorair_dirt,
                                             doorair_wood,doorair_shrub,0,doorair_sand,doorair_gravel,doorair_goldrock,doorair_ironrock,doorair_coal,doorair_tree,doorair_leaf,
                                             doorair_sponge,doorair_red,doorair_orange,doorair_yellow,doorair_lightgreen,doorair_green,doorair_aquagreen,doorair_cyan,doorair_lightblue,
                                             doorair_blue,doorair_purple,doorair_lightpurple,doorair_pink,doorair_darkpink,doorair_darkgrey,doorair_lightgrey,doorair_yellowflower,
                                             doorair_redflower,doorair_mushroom,doorair_redmushroom,doorair_goldsolid,doorair_iron,doorair_staircasefull,doorair_staircasestep,
                                             doorair_tnt,doorair_bookcase,doorair_stonevine
-                                           };*/
-        public readonly byte[] doorBlocks = { door_tree, door_obsidian, door_glass, door_white, 
-                                              door_brick, door_stone, door_cobblestone, door_rock,
+                                           };
+        /*public readonly byte[] doorBlocks = { door_tree, door_obsidian, door_glass, door_white, 
+                                              door_brick, door_stone, door_cobblestone, //door_rock,
                                               door_grass,door_dirt,door_wood,door_shrub,door_sand, 
                                               door_gravel,door_goldrock,door_ironrock,door_coal,door_leaf,
                                               door_sponge,door_red,door_orange,door_yellow,door_lightgreen,
@@ -241,10 +241,10 @@ namespace MCSharp.World
                                               door_lightgrey,door_yellowflower,door_redflower,door_mushroom,door_redmushroom,
                                               door_goldsolid,door_iron,door_staircasefull,door_staircasestep,door_tnt,
                                               door_bookcase,door_stonevine
-                                            };
+                                            };*/
         // The following array is storing doorair blocks
-        public readonly byte[] doorAirBlocks = { doorair_tree, doorair_obsidian, doorair_glass, doorair_white,
-                                                 doorair_brick, doorair_stone, doorair_cobblestone, doorair_rock,
+        /*public readonly byte[] doorAirBlocks = { doorair_tree, doorair_obsidian, doorair_glass, doorair_white,
+                                                 doorair_brick, doorair_stone, doorair_cobblestone, //doorair_rock,
                                                  doorair_grass,doorair_dirt,doorair_wood,doorair_shrub,doorair_sand, 
                                                  doorair_gravel,doorair_goldrock,doorair_ironrock,doorair_coal,doorair_leaf,
                                                  doorair_sponge,doorair_red,doorair_orange,doorair_yellow,doorair_lightgreen,
@@ -253,7 +253,7 @@ namespace MCSharp.World
                                                  doorair_lightgrey,doorair_yellowflower,doorair_redflower,doorair_mushroom,doorair_redmushroom,
                                                  doorair_goldsolid,doorair_iron,doorair_staircasefull,doorair_staircasestep,doorair_tnt,
                                                  doorair_bookcase,doorair_stonevine
-                                                };
+                                                };*/
 
         // The following array is storing op blocks for use with /viewop
         public readonly byte[] opBlocks = { op_glass,opsidian,op_brick,op_stone,op_cobblestone,op_air,op_water,op_white,op_grass,op_dirt,
@@ -426,8 +426,8 @@ namespace MCSharp.World
             switch (type)
             {
                 case Block.air:
-                //case Block.grass:
-                //case Block.blackrock:
+                case Block.grass:
+                case Block.blackrock:
                 case Block.water:
                 case Block.waterstill:
                 case Block.lava:
@@ -449,7 +449,7 @@ namespace MCSharp.World
                 case Block.rock: return Block.op_stone;
                 case Block.op_stone: return Block.rock;
 
-                case Block.grass: return Block.grass;
+                case Block.grass: return Block.op_grass;
                 case Block.op_grass: return Block.grass;
 
                 case Block.dirt: return Block.op_dirt;
@@ -611,7 +611,7 @@ namespace MCSharp.World
                 case Block.door_brick:
                 case Block.door_stone:
                 case Block.door_cobblestone:
-                case Block.door_rock:
+                //case Block.door_rock:
                 case Block.door_grass:
                 case Block.door_dirt:
                 case Block.door_wood:
@@ -780,7 +780,7 @@ namespace MCSharp.World
                 case Block.door_brick:
                 case Block.door_stone:
                 case Block.door_cobblestone:
-                case Block.door_rock:
+                //case Block.door_rock:
                 case Block.door_grass:
                 case Block.door_dirt:
                 case Block.door_wood:

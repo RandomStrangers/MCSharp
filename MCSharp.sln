@@ -1,13 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.7.34018.315
+VisualStudioVersion = 17.8.34330.188
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MCSharp", "MCSharp\MCSharp.csproj", "{B0F49025-8505-4FE2-A873-3A7E6B1EF693}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MCSharp CLI", "MCSharp CLI\MCSharp CLI.csproj", "{D2EC0E7C-AEB1-4013-9BCA-6B29857B8667}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MCSharp GUI", "MCSharp GUI\MCSharp GUI.csproj", "{6E712210-DDB7-4426-BA59-292054C53BEA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LevelConverter", "LevelConverter\LevelConverter\LevelConverter.csproj", "{BAD2FD7F-79E8-453B-BD9D-CCF869AABEA7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LevelConverter_console", "LevelConverter\LevelConverter_console\LevelConverter_console.csproj", "{E6FC22A9-2329-4CEB-872B-630353710EC9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,6 +45,22 @@ Global
 		{6E712210-DDB7-4426-BA59-292054C53BEA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6E712210-DDB7-4426-BA59-292054C53BEA}.Release|x86.ActiveCfg = Release|x86
 		{6E712210-DDB7-4426-BA59-292054C53BEA}.Release|x86.Build.0 = Release|x86
+		{BAD2FD7F-79E8-453B-BD9D-CCF869AABEA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BAD2FD7F-79E8-453B-BD9D-CCF869AABEA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BAD2FD7F-79E8-453B-BD9D-CCF869AABEA7}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{BAD2FD7F-79E8-453B-BD9D-CCF869AABEA7}.Debug|x86.Build.0 = Debug|Any CPU
+		{BAD2FD7F-79E8-453B-BD9D-CCF869AABEA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BAD2FD7F-79E8-453B-BD9D-CCF869AABEA7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BAD2FD7F-79E8-453B-BD9D-CCF869AABEA7}.Release|x86.ActiveCfg = Release|Any CPU
+		{BAD2FD7F-79E8-453B-BD9D-CCF869AABEA7}.Release|x86.Build.0 = Release|Any CPU
+		{E6FC22A9-2329-4CEB-872B-630353710EC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E6FC22A9-2329-4CEB-872B-630353710EC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E6FC22A9-2329-4CEB-872B-630353710EC9}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E6FC22A9-2329-4CEB-872B-630353710EC9}.Debug|x86.Build.0 = Debug|Any CPU
+		{E6FC22A9-2329-4CEB-872B-630353710EC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E6FC22A9-2329-4CEB-872B-630353710EC9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E6FC22A9-2329-4CEB-872B-630353710EC9}.Release|x86.ActiveCfg = Release|Any CPU
+		{E6FC22A9-2329-4CEB-872B-630353710EC9}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

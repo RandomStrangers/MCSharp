@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Security.Cryptography;
 using System.Xml.Serialization;
 
 namespace MCSharp
@@ -7,14 +8,14 @@ namespace MCSharp
     public static class Properties
     {
         
-        public static string ServerAdministrator = "sethbatman05";
-        public static string ServerName = "A new MCSharp Server is born";
+        public static string ServerOwner;
+        public static string ServerName = "[MCSharp] Default";
         public static string ServerMOTD = "Welcome to my MCSharp server!";
         public static byte MaxPlayers = 12;
         public static byte MaxMaps = 5;
-        public static int ServerPort = 24683;
-        public static bool PublicServer = true;
-        public static bool VerifyNames = false;
+        public static int ServerPort = 25460;
+        public static bool PublicServer = false;
+        public static bool VerifyNames = true;
         public static bool AllowWorldChat = true;
         public static bool GuestGoto = false;
         public static bool DebugEnabled = false;
@@ -32,28 +33,49 @@ namespace MCSharp
         public static int PhysicsOverload = 7500;
         public static int BackupInterval = 60;
 
-        public static Int32 advBuilderCuboidLimit = 10000;
-        public static Int32 moderatorCuboidLimit = 25000;
-        public static Int32 operatorCuboidLimit = 50000;
-        public static Int32 administratorCuboidLimit = 0;
+        public static int advBuilderCuboidLimit = 10000;
+        public static int moderatorCuboidLimit = 25000;
+        public static int operatorCuboidLimit = 50000;
+        public static int administratorCuboidLimit = 0;
 
 
         // IRC Section
         public static bool IRCEnabled = true;
-        public static int IRCPort = 6667;
+        public static int IRCPort = 6697;
         public static string IRCNick = "MCSharp";
         public static string IRCServer = "irc.esper.net";
-        public static string IRCChannel = "#ClassiCube_IRC";
+        public static string IRCChannel = "#changethis";
         public static bool IRCIdentify = false;
         public static string IRCPassword = "";
+        // only want ASCII alphanumerical characters for salt
+        static bool AcceptableSaltChar(char c)
+        {
+            return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
+                || (c >= '0' && c <= '9');
+        }
+        /// <summary> Generates a random salt that is used for calculating mppasses. </summary>
+        public static string GenerateSalt()
+        {
+            RandomNumberGenerator rng = RandomNumberGenerator.Create();
+            char[] str = new char[32];
+            byte[] one = new byte[1];
 
+            for (int i = 0; i < str.Length;)
+            {
+                rng.GetBytes(one);
+                if (!AcceptableSaltChar((char)one[0])) continue;
+
+                str[i] = (char)one[0]; i++;
+            }
+            return new string(str);
+        }
 
         public static void Load()
         {
-            string rndchars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-            Random rnd = new Random();
-            for (int i = 0; i < 16; ++i) { Server.salt += rndchars[rnd.Next(rndchars.Length)]; }
-
+            //string rndchars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            //Random rnd = new Random();
+            //for (int i = 0; i < 16; ++i) { Server.salt += rndchars[rnd.Next(rndchars.Length)]; }
+            Server.salt = GenerateSalt();
             if (File.Exists("server.properties"))
             {
                 string[] lines = File.ReadAllLines("server.properties");
@@ -82,7 +104,7 @@ namespace MCSharp
                             case "server-administrator":
                                 if (ValidString(value, "![]:.,{}~-+()?_/\\ "))
                                 {
-                                    ServerAdministrator = value;
+                                    ServerOwner = value;
                                 }
                                 else
                                 {
@@ -356,7 +378,7 @@ namespace MCSharp
                 w.WriteLine();
                 w.WriteLine("# Server options");
                 w.WriteLine("server-name = " + ServerName);
-                w.WriteLine("server-administrator = " + ServerAdministrator);
+                w.WriteLine("server-administrator = " + ServerOwner);
                 w.WriteLine("motd = " + ServerMOTD);
                 w.WriteLine("port = " + ServerPort.ToString());
                 w.WriteLine("verify-names = " + VerifyNames.ToString().ToLower());

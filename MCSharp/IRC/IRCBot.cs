@@ -6,14 +6,14 @@ using System.Threading;
 
 namespace MCSharp
 {
-    class IRCBot
+    public class IRCBot
     {
-        static IrcClient irc = new IrcClient();
-        static string server = Properties.IRCServer;
-        static string channel = Properties.IRCChannel;
-        static string nick = Properties.IRCNick;
+        public static IrcClient irc = new IrcClient();
+        public static string server = Properties.IRCServer;
+        public static string channel = Properties.IRCChannel;
+        public static string nick = Properties.IRCNick;
         static Thread ircThread;
-
+        public static bool Connected;
         static string[] names;
 
         public IRCBot()
@@ -29,7 +29,7 @@ namespace MCSharp
                 irc.OnPart += new PartEventHandler(OnPart);
                 irc.OnQuit += new QuitEventHandler(OnQuit);
                 irc.OnNickChange += new NickChangeEventHandler(OnNickChange);
-                //irc.OnDisconnected += new EventHandler(OnDisconnected);
+                irc.OnDisconnected += new EventHandler(OnDisconnected);
                 irc.OnQueryMessage += new IrcEventHandler(OnPrivMsg);
                 irc.OnNames += new NamesEventHandler(OnNames);
                 irc.OnChannelAction += new ActionEventHandler(OnAction);
@@ -47,13 +47,13 @@ namespace MCSharp
             Logger.Log("Connecting to IRC");
         }
         // When connected
-        void OnConnected(object sender, EventArgs e)
+       public void OnConnected(object sender, EventArgs e)
         {
             Logger.Log("Connected to IRC");
             irc.Login(nick, nick, 0, nick);
 
             // Check to see if we want to register our bot with nickserv
-            
+
             if (Properties.IRCIdentify && Properties.IRCPassword != string.Empty)
             {
                 Logger.Log("Identifying with Nickserv");
@@ -62,20 +62,21 @@ namespace MCSharp
 
             Logger.Log("Joining channel");
             irc.RfcJoin(channel);
-           
-            
             irc.Listen();
+            Connected = true;
+
         }
 
         void OnNames(object sender, NamesEventArgs e)
         {
             names = e.UserList;
         }
-        //void OnDisconnected(object sender, EventArgs e)
-        //{
-        //    try { irc.Connect(server, 6667); }
-        //    catch (Exception ex) { Console.WriteLine("Failed to reconnect to IRC"); }
-        //}
+        void OnDisconnected(object sender, EventArgs e)
+        {
+            try { irc.Connect(server, 6667); }
+            catch (Exception ex) { Console.WriteLine("Failed to reconnect to IRC: " + ex); }
+            Connected = false;
+        }
         // On public channel message
         void OnChanMessage(object sender, IrcEventArgs e)
         {
@@ -93,8 +94,8 @@ namespace MCSharp
             Logger.Log("IRC: " + e.Data.Nick + ": " + temp, LogType.IRCChat);
             Player.GlobalMessage("IRC: &1" + e.Data.Nick + ": &f" + temp);
 
-            //s.Log("IRC: " + e.Data.Nick + ": " + e.Data.Message);
-            //Player.GlobalMessage("IRC: &1" + e.Data.Nick + ": &f" + e.Data.Message);
+            Logger.Log("IRC: " + e.Data.Nick + ": " + e.Data.Message);
+           Player.GlobalMessage("IRC: &1" + e.Data.Nick + ": &f" + e.Data.Message);
         }
         // When someone joins the IRC
         void OnJoin(object sender, JoinEventArgs e)
@@ -130,7 +131,7 @@ namespace MCSharp
                 else
                     msg = "";
 
-                //Console.WriteLine(cmd + " : " + msg);
+                Console.WriteLine(cmd + " : " + msg);
                 Logger.Log(cmd + " : " + msg, LogType.Debug);
                 switch (cmd)
                 {

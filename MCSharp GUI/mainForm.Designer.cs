@@ -1,4 +1,7 @@
-﻿namespace MCSharp_GUI
+﻿using MCSharp;
+using System;
+
+namespace MCSharp_GUI
 {
     partial class mainForm
     {
@@ -16,6 +19,13 @@
             if (disposing && (components != null))
             {
                 components.Dispose();
+                thisProcess.Kill();
+                Environment.Exit(0);
+                Server s = new Server();
+                s.Stop();
+                server.Stop();
+
+                this.Close();
             }
             base.Dispose(disposing);
         }
@@ -175,7 +185,7 @@
             this.externalURLTextbox.ReadOnly = true;
             this.externalURLTextbox.Size = new System.Drawing.Size(544, 23);
             this.externalURLTextbox.TabIndex = 16;
-            this.externalURLTextbox.Text = "Waiting for External URL...";
+            this.externalURLTextbox.Text = "Waiting for server URL...";
             // 
             // mainTabControl
             // 
@@ -271,7 +281,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Name = "mainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "MCSharp - Server Name";
+            this.Text = MCSharp.Server.SoftwareNameVersioned + " - " + MCSharp.Properties.ServerName;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.mainForm_FormClosing);
             this.Load += new System.EventHandler(this.mainForm_Load);
             this.mainFormStatusStrip.ResumeLayout(false);

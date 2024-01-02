@@ -5,36 +5,33 @@ using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.Remoting.Channels;
 using System.Threading;
 using System.Xml.Serialization;
 using MCSharp.Heartbeat;
 using MCSharp.World;
+using Meebey.SmartIrc4net;
 namespace MCSharp
 {
     public class Server
     {
-        // Server Version String
-        public static double VersionNumber { get { return 0.94; } }
-        public static double LatestVersion = VersionNumber;
+        public delegate void MessageEventHandler(string message);
+        public event MessageEventHandler OnCCURLChange;
+        public event MessageEventHandler OnURLChange;
 
+        // URL hash for connecting to the server
+        public static string Hash = "";
+        public static string CCURL = string.Empty;
+        public static string URL = string.Empty;
         /// <summary>
-        /// Used to
+        /// SoftwareName2 and SoftwareNameVersioned2 are for Betacraft heartbeats 
+        /// since BetaCraft doesn't allow MCSharp to connect using its default SoftwareName.
         /// </summary>
-        public delegate void VoidHandler ();
-        public event VoidHandler OnSettingsUpdate;
-
-        static Socket listen;
-        static System.Diagnostics.Process process;
-        static System.Timers.Timer updateTimer = new System.Timers.Timer(100);
-        static System.Timers.Timer messageTimer = new System.Timers.Timer(60000 * 5);   //Every 5 mins
-
-        static Thread physThread;
-        public const string InternalVersion = "0.94";
+        public const string InternalVersion = "1.0.2";
         public static string Version { get { return InternalVersion; } }
+        public static string SoftwareName { get { return SoftwareNameConst; } }
 
-
-
-        public static string SoftwareName = "MCSharp";
+        public const string SoftwareNameConst = "MCSharp";
         static string fullName;
         public static string SoftwareNameVersioned
         {
@@ -42,6 +39,29 @@ namespace MCSharp
             get { return fullName ?? SoftwareName + " " + Version; }
             set { fullName = value; }
         }
+        public const string SoftwareNameVersionedConst = SoftwareNameConst + " " + InternalVersion;        
+        public static string salt = "";
+        public void UpdateCCUrl(string ccurl)
+        {
+            if (OnCCURLChange != null) OnCCURLChange(ccurl);
+        }
+        public void UpdateUrl(string url)
+        {
+            if (OnURLChange != null) OnURLChange(url);
+        }
+        /// <summary>
+        /// Used to
+        /// </summary>
+        public delegate void VoidHandler ();
+        public event VoidHandler OnSettingsUpdate;
+
+        static Socket listen;
+        static Process process;
+        static System.Timers.Timer updateTimer = new System.Timers.Timer(100);
+        static System.Timers.Timer messageTimer = new System.Timers.Timer(60000 * 5);   //Every 5 mins
+
+        static Thread physThread;
+
         /// <summary>
         /// Player Lists
         /// </summary>
@@ -80,25 +100,12 @@ namespace MCSharp
 
         public static List<string> jokerMessages = new List<string>();
 
-        public static string salt = "";
 
         public static Server s;
-        public static string CCURL = string.Empty;
 
         private bool running = false;
 
         // Constructor
-        class Program
-        {
-            static void Main()
-            {
-                int x = 0;
-                while (true)
-                {
-                    x++;
-                }
-            }
-        }
         public Server ()
         {
             Server.s = this;
@@ -106,53 +113,67 @@ namespace MCSharp
 
         public void Start ()
         {
-            if (!File.Exists("ccexternalurl.txt"))
-            {
-                File.Create("ccexternalurl.txt");
-            }
-
             Logger.Log("Starting Server");
             running = true;
             Logger.Log("Doing sanity checks");
 
 
-            //if (SanityCheck())
-           // {
+            if (SanityCheck())
+            {
                 Logger.Log("Sanity Checks Passed");
                 Properties.Load();
-
+                if (Properties.ServerOwner == string.Empty)
+                {
+                    Logger.Log("Error! No Administrator set in the server.properties", LogType.Error);
+                }
                 if (File.Exists("lastseen.xml"))
                 {
-                    Server.LoadLastSeen();  //Added by bman
-                 }
-                    Thread.Sleep(100);
-
-                    SetupRanks();
-                    SetupLevels();
-
-                    SetupNetwork();
-
-                    SetupGeneral();
-                    SetupIRC();
-
-                    // Init Heartbeat
-                    new ClassiCubeBeat();
-                    MinecraftHeartbeat.Init();
-                    WOMHeartbeat.Init();
-                    // Init physics
-                    physThread = new Thread(new ThreadStart(doPhysics));
-                    physThread.Start();
-
-                    // Autosaver init
-                    new AutoSaver(Properties.BackupInterval);
-
-                    // Check the port forward status
-                   // doPortCheck();
-            //}
-        }
-
-        public void Stop ()
+                    LoadLastSeen(); //Added by bman
+                }
+                Setup();
+              }
+            }
+        public void Setup()
         {
+            Thread.Sleep(100);
+            SetupRanks();
+            SetupLevels();
+            if (!SetupNetwork())
+                return;
+            SetupGeneral();
+            SetupIRC();
+            // Init Heartbeat
+            //ClassiCubeBeat.Init();
+            MinecraftHeartbeat.Init();
+            //WomHeartbeat.Init();
+            string file = "externalurl.txt";
+            string contents = File.ReadAllText(file);
+            Logger.Log(contents);
+            // No longer going to be served. Probably should only be done at very rare intervals anyways
+            //MCSharpUpdateHeartbeat.Init();
+            // Init physics
+            physThread = new Thread(new ThreadStart(doPhysics));
+            physThread.Start();
+            // Autosaver init
+            new AutoSaver(Properties.BackupInterval);
+            // Check the port forward status
+            doPortCheck();
+            if (IRCBot.IsConnected()) {
+                string message = Properties.ServerName + " Online!";
+                IRCBot.irc.SendMessage(SendType.Message, Properties.IRCChannel, message);
+                Logger.Log(message);
+            }
+        }
+        public void Stop()
+        {
+            if (Properties.IRCEnabled)
+            {
+                //IRCBot.Say(message);
+                string message = Properties.ServerName + " Shutting down!";
+                IRCBot.irc.SendMessage(SendType.Message, IRCBot.channel, message);
+                Logger.Log(message);
+                Thread.Sleep(1000);
+            }
             BindingList<Player> kickList = Player.players;
             foreach (var pl in Player.players)
             {
@@ -169,7 +190,7 @@ namespace MCSharp
             // End running
             running = false;
             Environment.Exit(0);
-
+            Process.GetCurrentProcess().Kill();
         }
 
         #region === SETUP ===
@@ -257,9 +278,9 @@ namespace MCSharp
             {
                 path = Path.GetFullPath(path);
                 Logger.Log(path, LogType.Debug);
-                FileStream myfile = File.Create(path + "permissiontest.txt");
+                FileStream myfile = File.Create("permissiontest.txt");
                 myfile.Close();
-                File.Delete(path + "permissiontest.txt");
+                File.Delete("permissiontest.txt");
                 /*FileIOPermission writePermission = new FileIOPermission(FileIOPermissionAccess.AllAccess, path);
                 if (!SecurityManager.IsGranted(writePermission))
                 {
@@ -274,10 +295,13 @@ namespace MCSharp
             return hasAccess;
         }
 
-        void SetupIRC ()
+        void SetupIRC()
         {
             if (Properties.IRCEnabled)
+            {
                 new IRCBot();
+            }
+
         }
 
         void SetupGeneral ()
@@ -293,7 +317,7 @@ namespace MCSharp
             // Performance counters
             try
             {
-                if (System.Environment.OSVersion.Platform != PlatformID.Unix)
+                if (Environment.OSVersion.Platform != PlatformID.Unix)
                 {
                     PCCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
                     ProcessCounter = new PerformanceCounter("Process", "% Processor Time", Process.GetCurrentProcess().ProcessName);
@@ -316,7 +340,7 @@ namespace MCSharp
                 RandomMessage();
             };
             messageTimer.Start();
-            process = System.Diagnostics.Process.GetCurrentProcess();
+            process = Process.GetCurrentProcess();
 
             /*if (File.Exists("griefExemption.txt"))
             {
@@ -546,12 +570,13 @@ namespace MCSharp
                         else
                         {
                             portOpen = true;
-                            Logger.Log("Port " + Properties.ServerPort + " is closed. You will need to set up forwarding.", LogType.Warning);
+                            Logger.Log("Port " + Properties.ServerPort + " is open!");
                         }
                     }
                 }
                 else
                 {
+                    portOpen = true;
                     Logger.Log("Port check did not complete. Please try again.", LogType.Warning);
                 }
 
@@ -584,8 +609,16 @@ namespace MCSharp
             }
         }
 
-        public static void ForceExit()
+        public static void ForceExit ()
         {
+            if (Properties.IRCEnabled)
+            {
+                //IRCBot.Say(message);
+                string message = Properties.ServerName + " Shutting down!";
+                IRCBot.irc.SendMessage(SendType.Message, IRCBot.channel, message);
+                Logger.Log(message);
+                Thread.Sleep(1000);
+            }
             foreach (var player in Player.players)
             {
                 player.Kick("Server shutdown.");
@@ -600,9 +633,7 @@ namespace MCSharp
             if (process != null)
             {
                 Logger.Log("Killing Process...", LogType.Error);
-                //process.Kill();
-                Environment.FailFast("Shutting down!");
-
+                process.Kill();
             }
 
         }

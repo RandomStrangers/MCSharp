@@ -21,7 +21,7 @@ namespace MCSharp
             if (message == "")
             {
                 string strOperators, strModerators, strAdministrator;
-                strAdministrator = Properties.ServerAdministrator;
+                strAdministrator = Properties.ServerOwner;
                 strOperators = "";
                 strModerators = "";
 

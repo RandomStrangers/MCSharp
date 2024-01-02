@@ -18,7 +18,6 @@
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
-    <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation />
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
@@ -40,11 +39,12 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\bin\debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <LangVersion>11.0</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -54,14 +54,15 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <LangVersion>11.0</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>..\bin\Debug\</OutputPath>
+    <OutputPath>..\bin\debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
-    <LangVersion>7.3</LangVersion>
+    <LangVersion>11.0</LangVersion>
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
@@ -70,7 +71,7 @@
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x86</PlatformTarget>
-    <LangVersion>7.3</LangVersion>
+    <LangVersion>11.0</LangVersion>
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
@@ -82,7 +83,11 @@
   </Target>
   -->
   <ItemGroup>
-    <Compile Include="Commands\Administrative\CmdShutdown.cs" />
+    <Compile Include="Added\CmdSay2.cs" />
+    <Compile Include="Added\CmdShutdown.cs" />
+    <Compile Include="Added\CmdShutdown2.cs" />
+    <Compile Include="Added\Program.cs" />
+    <Compile Include="Added\Properties.cs" />
     <Compile Include="Commands\Block\CmdCopy.cs" />
     <Compile Include="Commands\Block\CmdPaste.cs" />
     <Compile Include="Global\BlockBuffer.cs" />
@@ -93,9 +98,10 @@
     <Compile Include="Global\SolidType.cs" />
     <Compile Include="Global\ThreadedBindingList.cs" />
     <Compile Include="Global\UndoBuffer.cs" />
-    <Compile Include="Heartbeat\CCHearbeat2.cs" />
-    <Compile Include="Heartbeat\Ibeat.cs" />
-    <Compile Include="Heartbeat\WOMHeartbeat.cs" />
+    <Compile Include="Added\Heartbeat1\ClassiCubeBeat.cs" />
+    <Compile Include="Added\Heartbeat1\Heart.cs" />
+    <Compile Include="Added\Heartbeat1\IBeat.cs" />
+    <Compile Include="Added\Heartbeat1\WOMHeartbeat.cs" />
     <Compile Include="Heartbeat\Heartbeat.cs" />
     <Compile Include="Heartbeat\MinecraftHeartbeat.cs" />
     <Compile Include="World\Map.Physics.cs" />
@@ -132,9 +138,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="World\LevelPermission.cs" />
-    <Compile Include="Log\Logger.cs" />
-    <Compile Include="Log\LogSource.cs" />
-    <Compile Include="Log\LogType.cs" />
+    <Compile Include="Logger\Logger.cs" />
+    <Compile Include="Logger\LogSource.cs" />
+    <Compile Include="Logger\LogType.cs" />
     <Compile Include="Commands\Block\CmdAbort.cs" />
     <Compile Include="Commands\Block\CmdAbout.cs" />
     <Compile Include="Commands\Block\CmdActiveLava.cs" />
@@ -246,7 +252,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>.\System.Data.SQLite.DLL</HintPath>
     </Reference>
-    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.XML" />
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>

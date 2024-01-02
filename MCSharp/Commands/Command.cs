@@ -90,8 +90,6 @@ namespace MCSharp
         public static void InitAll()
         {
             // Administrative commands
-            all.Add(new CmdShutdown(CommandGroup.Admin, GroupEnum.Moderator, "shutdown"));
-            all.Add(new CmdShutdown(CommandGroup.Admin, GroupEnum.Moderator, "/shutdown"));
             all.Add(new CmdBan(CommandGroup.Admin, GroupEnum.Moderator, "ban"));
             all.Add(new CmdBanip(CommandGroup.Admin, GroupEnum.Moderator, "banip"));
             all.Add(new CmdBanned(CommandGroup.Admin, GroupEnum.Operator, "banned"));
@@ -109,6 +107,8 @@ namespace MCSharp
             all.Add(new CmdTp(CommandGroup.Admin, GroupEnum.Builder, "tp"));
             all.Add(new CmdUnban(CommandGroup.Admin, GroupEnum.Moderator, "unban"));
             all.Add(new CmdUnbanip(CommandGroup.Admin, GroupEnum.Moderator, "unbanip"));
+            all.Add(new CmdShutdown(CommandGroup.Admin, GroupEnum.Moderator, "shutdown"));
+            all.Add(new CmdShutdown2(CommandGroup.Admin, GroupEnum.Moderator, "/shutdown"));
 
             // Chat
             all.Add(new CmdAfk(CommandGroup.Chat, GroupEnum.Guest, "afk"));
@@ -118,6 +118,7 @@ namespace MCSharp
             all.Add(new CmdMe(CommandGroup.Chat, GroupEnum.Guest, "me"));
             all.Add(new CmdOpChat(CommandGroup.Chat, GroupEnum.Moderator, "opchat"));
             all.Add(new CmdSay(CommandGroup.Chat, GroupEnum.Moderator, "say"));
+            all.Add(new CmdSay2(CommandGroup.Chat, GroupEnum.Moderator, "say2"));
             all.Add(new CmdWhisperChat(CommandGroup.Chat, GroupEnum.Guest, "whisperchat"));
 
             // Block Commands

@@ -1,10 +1,10 @@
-﻿﻿using System;
+﻿﻿ using System;
 using System.ComponentModel;
 using System.IO;
 using System.Net;
 using System.Text;
 using System.Threading;
-
+using static MCSharp.Player;
 namespace MCSharp.Heartbeat
 {
     public class MinecraftHeartbeat : Heartbeat
@@ -35,6 +35,7 @@ namespace MCSharp.Heartbeat
 
         public static void Init ()
         {
+            if (instance == null)
             {
                 instance = new MinecraftHeartbeat();
                 worker = new BackgroundWorker();
@@ -56,25 +57,24 @@ namespace MCSharp.Heartbeat
 
         public MinecraftHeartbeat ()
         {
-            _timeout = 3000; // Beat every 3 seconds
+            _timeout = 1000; // Beat every 1 second
             serverURL = "http://www.classicube.net/heartbeat.jsp";
             staticPostVars = "port=" + Properties.ServerPort +
                              "&max=" + Properties.MaxPlayers +
                              "&name=" + Uri.EscapeDataString(Properties.ServerName) +
                              "&public=" + Properties.PublicServer +
-                             "&version=7" +
+                             "&version=7"+
+                             "&users=" + number+
+                             "&salt=" + Uri.EscapeDataString(Properties.GenerateSalt()) +
                              "&software=" + Server.SoftwareNameVersioned +
                              "&web=true";
         }
 
         void UpdateHeartBeatPostVars ()
         {
-            string rndchars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-            Random rnd = new Random();
-            for (int i = 0; i < 16; ++i) { Server.salt += rndchars[rnd.Next(rndchars.Length)]; }
             postVars = staticPostVars;
-            postVars += "&users=" + (Player.number);
-            postVars += "&salt=" + Uri.EscapeDataString(Server.salt);
+            postVars += "&users=" + number;
+            postVars += "&salt=" + Uri.EscapeDataString(Properties.GenerateSalt());
         }
 
         public bool DoHeartBeat ()
@@ -89,7 +89,7 @@ namespace MCSharp.Heartbeat
             try
             {
                 request = (HttpWebRequest) WebRequest.Create(new Uri(serverURL));
-                request.Timeout = 20000;
+                request.Timeout = 1000;
 
                 request.Method = "POST";
                 request.ContentType = "application/x-www-form-urlencoded";
@@ -142,9 +142,10 @@ namespace MCSharp.Heartbeat
             {
                 if (ex.Status == WebExceptionStatus.Timeout)
                 {
-                    Logger.Log("Timeout: minecraft.net", LogType.Debug);
+                    Logger.Log("Timeout: classicube.net", LogType.Debug);
                     Logger.Log("Heartbeat Timed out: The classicube.net website is probably down", LogType.Error);
                     Logger.Log(ex.Message, LogType.ErrorMessage);
+
                 }
                 else
                 {
@@ -155,6 +156,7 @@ namespace MCSharp.Heartbeat
                             string line = responseReader.ReadLine();
                             Logger.Log(line, LogType.ErrorMessage);
                             Logger.Log(externalURL, LogType.ErrorMessage);
+
                         }
                     }
                     Logger.Log("Failed Heartbeat to classicube.net: The status was " + ex.Status.ToString(), LogType.Error);

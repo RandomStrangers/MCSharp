@@ -6,12 +6,11 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Security.Policy;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
-
-
 using MCSharp;
 using MCSharp.Heartbeat;
 
@@ -41,16 +40,12 @@ namespace MCSharp_GUI
 
         private void UpdateUrlTextbox(string url)
         {
-                string url2 = File.ReadAllText("ccexternalurl.txt");
-                externalURLTextbox.Text = url2;
-                playNowButton.Enabled = true;
+            externalURLTextbox.Text = url;
+            playNowButton.Enabled = true;
         }
-
         private void PCTimer_Tick(object sender, EventArgs e)
         {
             MemoryStatusLabel.Text = Math.Round((double)Environment.WorkingSet / 1048576).ToString() + "MB";
-            string url = File.ReadAllText("ccexternalurl.txt");
-            UpdateUrl(url);
             if (Math.Round((double)Environment.WorkingSet / 1048576) > 2048)
             {
                 thisProcess.Kill();
@@ -61,21 +56,31 @@ namespace MCSharp_GUI
             {
                 serverStatusLabel.BackColor = Color.Red;
                 serverStatusLabel.Text = "Heartbeat Error!";
+                string file = "externalurl.txt";
+                string contents = File.ReadAllText(file);
+                this.externalURLTextbox.Text = contents;
+                UpdateUrl(contents);
+                UpdateUrlTextbox(contents);
+                Server.s.UpdateCCUrl(contents);
+                Server.s.UpdateUrl(contents);
             }
             else if (MinecraftHeartbeat.Hash != null)
             {
-                serverStatusLabel.BackColor = Color.Green;
-                serverStatusLabel.Text = "Heartbeat OK!";
-            }
-            {
-                updateAvailableLabel.DisplayStyle = ToolStripItemDisplayStyle.None;
+              serverStatusLabel.BackColor = Color.Green;
+            serverStatusLabel.Text = "Heartbeat OK!";
+                string file = "externalurl.txt";
+                string contents = File.ReadAllText(file);
+                this.externalURLTextbox.Text = contents;
+                UpdateUrl(contents);
+                UpdateUrlTextbox(contents);
+                Server.s.UpdateCCUrl(contents);
+                Server.s.UpdateUrl(contents);
             }
         }
-
+            
         private void FileExitMenu_Click(object sender, EventArgs e)
         {
-            //this.Close(); // Doesn't actually close it on windows, just minimizes it.
-            Environment.FailFast("Shutting down!");
+            this.Close();
         }
 
         private void mainForm_Load(object sender, EventArgs e)
@@ -178,23 +183,22 @@ namespace MCSharp_GUI
             this.Text = "MCSharp - " + message;
         }
 
-        private void mainForm_FormClosing(object sender, FormClosingEventArgs e)
+        public void mainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             server.Stop();
+            Server s = new Server();
+            s.Stop();
             Logger.OnLog -= UpdateLog;
+            Environment.Exit(0);
+            this.Close();
+            thisProcess.Kill();
+
         }
 
         private void BGWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
             Thread.Sleep(1000);
             server.Start();
-            bool sendhb = true;
-            while (sendhb)
-            {
-                new ClassiCubeBeat();
-                MinecraftHeartbeat.Init();
-                WOMHeartbeat.Init();
-            }
         }
 
         private void autoScrollCheckbox_CheckedChanged(object sender, EventArgs e)

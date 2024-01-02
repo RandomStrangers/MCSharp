@@ -92,7 +92,7 @@ namespace MCSharp
         {
             GroupEnum g = GroupEnum.Guest;
 
-            if (Properties.ServerAdministrator == name)
+            if (Properties.ServerOwner == name)
                 g = GroupEnum.Administrator;
             else if (Server.banned.Contains(name))
                 g = GroupEnum.Banned;

@@ -61,7 +61,7 @@ namespace LevelConverter
                         success = LoadNewMCSharp();
                         break;
                     case ".fcm":
-                        success = false; // We do not support loading of fCraft Yet
+                        success = false; // We do not support loading of fCraft yet
                         break;
                     case ".dat":
                         success = LoadDAT();

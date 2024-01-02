@@ -92,7 +92,6 @@ namespace MCSharp
             catch
             {
                 Logger.Log("Error reading rules.txt in SendRules()", LogType.Error);
-                Logger.Log("Are you sure the file exists?", LogType.Error);
             }
         }
     }
