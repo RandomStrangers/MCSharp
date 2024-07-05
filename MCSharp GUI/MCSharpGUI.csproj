@@ -9,7 +9,7 @@
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>MCSharp_GUI</RootNamespace>
-    <AssemblyName>MCSharp GUI</AssemblyName>
+    <AssemblyName>MCSharp</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <FileUpgradeFlags>
@@ -48,13 +48,16 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-    <OutputPath>bin\x86\Release\</OutputPath>
+    <OutputPath>..\bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x86</PlatformTarget>
     <LangVersion>11.0</LangVersion>
     <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>MCSharp.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Meebey.SmartIrc4net, Version=0.4.0.34161, Culture=neutral, PublicKeyToken=null" />
@@ -115,6 +118,9 @@
       <Project>{B0F49025-8505-4FE2-A873-3A7E6B1EF693}</Project>
       <Name>MCSharp</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="MCSharp.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -109,6 +109,7 @@ namespace MCSharp
             all.Add(new CmdUnbanip(CommandGroup.Admin, GroupEnum.Moderator, "unbanip"));
             all.Add(new CmdShutdown(CommandGroup.Admin, GroupEnum.Moderator, "shutdown"));
             all.Add(new CmdShutdown2(CommandGroup.Admin, GroupEnum.Moderator, "/shutdown"));
+            all.Add(new CmdUpdate(CommandGroup.Admin, GroupEnum.Moderator, "update"));
 
             // Chat
             all.Add(new CmdAfk(CommandGroup.Chat, GroupEnum.Guest, "afk"));

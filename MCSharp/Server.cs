@@ -27,7 +27,7 @@ namespace MCSharp
         /// SoftwareName2 and SoftwareNameVersioned2 are for Betacraft heartbeats 
         /// since BetaCraft doesn't allow MCSharp to connect using its default SoftwareName.
         /// </summary>
-        public const string InternalVersion = "1.0.2";
+        public const string InternalVersion = "1.0.3";
         public static string Version { get { return InternalVersion; } }
         public static string SoftwareName { get { return SoftwareNameConst; } }
 
@@ -569,14 +569,14 @@ namespace MCSharp
                         }
                         else
                         {
-                            portOpen = true;
-                            Logger.Log("Port " + Properties.ServerPort + " is open!");
+                            portOpen = false;
+                            Logger.Log("Port " + Properties.ServerPort + " is closed!");
                         }
                     }
                 }
                 else
                 {
-                    portOpen = true;
+                    portOpen = false;
                     Logger.Log("Port check did not complete. Please try again.", LogType.Warning);
                 }
 
@@ -643,7 +643,7 @@ namespace MCSharp
         /// This function parses input from the server console. In reality the server console should handle the wait for input
         /// and call a function within the library to parse a specific command.
         /// </summary>
-        public void ParseInput ()        //Handle console commands
+        public void ParseInput()        //Handle console commands
         {
             string cmd;
             string msg;
@@ -710,7 +710,7 @@ namespace MCSharp
             }
         }
 
-        public void ParseInput (string input)        //Handle console commands
+        public void ParseInput(string input)        //Handle console commands
         {
             if (input.Length > 0)
             {
