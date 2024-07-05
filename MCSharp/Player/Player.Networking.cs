@@ -624,17 +624,6 @@ namespace MCSharp
                 /*if (!Server.console && Server.win != null)
                     Server.win.UpdateClientList(players);*/
                 left.Add(this.name.ToLower(), this.ip);
-                //Added by bman for lastseen command
-                if (!lastSeen.ContainsKey(this.name.ToLower()))
-                {
-                    lastSeen.Add(this.name.ToLower(), DateTime.Now);
-                    Server.SaveLastSeen();
-                }
-                else
-                {
-                    lastSeen[this.name.ToLower()] = DateTime.Now;
-                    Server.SaveLastSeen();
-                }
             }
             else
             {

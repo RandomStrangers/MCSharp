@@ -158,7 +158,7 @@ namespace MCSharp
             all.Add(new CmdHelp(CommandGroup.Information, GroupEnum.Guest, "help"));
             all.Add(new CmdHidden(CommandGroup.Information, GroupEnum.Moderator, "hidden"));
             all.Add(new CmdInfo(CommandGroup.Information, GroupEnum.Guest, "info"));
-            all.Add(new CmdLastSeen(CommandGroup.Information, GroupEnum.Disabled, "lastseen")); // Disabled
+            //all.Add(new CmdLastSeen(CommandGroup.Information, GroupEnum.Disabled, "lastseen")); // Disabled
             all.Add(new CmdMods(CommandGroup.Information, GroupEnum.Guest, "mods"));
             all.Add(new CmdNews(CommandGroup.Information, GroupEnum.Guest, "news"));
             all.Add(new CmdOps(CommandGroup.Information, GroupEnum.Guest, "ops"));

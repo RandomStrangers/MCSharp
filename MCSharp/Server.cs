@@ -7,7 +7,6 @@ using System.Net;
 using System.Net.Sockets;
 using System.Runtime.Remoting.Channels;
 using System.Threading;
-using System.Xml.Serialization;
 using MCSharp.Heartbeat;
 using MCSharp.World;
 using Meebey.SmartIrc4net;
@@ -125,10 +124,6 @@ namespace MCSharp
                 if (Properties.ServerOwner == string.Empty)
                 {
                     Logger.Log("Error! No Administrator set in the server.properties", LogType.Error);
-                }
-                if (File.Exists("lastseen.xml"))
-                {
-                    LoadLastSeen(); //Added by bman
                 }
                 Setup();
               }
@@ -847,45 +842,6 @@ namespace MCSharp
         internal void SettingsUpdate ()
         {
             if (OnSettingsUpdate != null) OnSettingsUpdate();
-        }
-
-        //Added by bman
-        public static void SaveLastSeen ()
-        {
-            List<string> saveList = new List<string>();
-            foreach (KeyValuePair<string, DateTime> kvp in Player.lastSeen)
-            {
-                saveList.Add(kvp.Key + "," + kvp.Value.ToString());
-            }
-
-            // Serialization
-            XmlSerializer xs = new XmlSerializer(typeof(List<string>));
-            TextWriter xw = new StreamWriter("lastseen.xml");
-            xs.Serialize(xw, saveList);
-            xw.Close();
-        }
-
-        //Added by bman
-        public static void LoadLastSeen ()
-        {
-            // Deserialization
-            List<string> loadList = new List<string>();
-            XmlSerializer xs = new XmlSerializer(typeof(List<string>));
-            TextReader xr = new StreamReader("lastseen.xml");
-            loadList = (List<string>) xs.Deserialize(xr);
-            xr.Close();
-
-            Dictionary<string, DateTime> dict = new Dictionary<string, DateTime>();
-            foreach (string s in loadList)
-            {
-                string key, value;
-                string[] temp = s.Split(',');
-                key = temp[0];
-                value = temp[1];
-
-                dict.Add(key, DateTime.Parse(value));
-            }
-            Player.lastSeen = dict;
         }
     }
 }

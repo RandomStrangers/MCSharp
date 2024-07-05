@@ -44,7 +44,6 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
-    <LangVersion>11.0</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -54,7 +53,6 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
-    <LangVersion>11.0</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -62,7 +60,6 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
-    <LangVersion>11.0</LangVersion>
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
@@ -71,7 +68,6 @@
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x86</PlatformTarget>
-    <LangVersion>11.0</LangVersion>
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
@@ -169,7 +165,6 @@
     <Compile Include="Commands\Chat\CmdJoker.cs" />
     <Compile Include="Commands\Administrative\CmdKick.cs" />
     <Compile Include="Commands\Administrative\CmdKickban.cs" />
-    <Compile Include="Commands\Information\CmdLastSeen.cs" />
     <Compile Include="Commands\Block\CmdLava.cs" />
     <Compile Include="Commands\Level\CmdLevels.cs" />
     <Compile Include="Commands\Level\CmdLoad.cs" />
@@ -230,13 +225,6 @@
     <Compile Include="Settings.Designer.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Changelog.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="mcsharp.ico" />
-    <Content Include="_TODO.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <Reference Include="Meebey.SmartIrc4net, Version=0.4.0.34161, Culture=neutral">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>.\Meebey.SmartIrc4net.dll</HintPath>
@@ -252,10 +240,6 @@
     <Reference Include="System.Data.SQLite, Version=1.0.67.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>.\System.Data.SQLite.DLL</HintPath>
-    </Reference>
-    <Reference Include="System.XML" />
-    <Reference Include="System.Xml.Linq">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
   </ItemGroup>
   <ItemGroup>
