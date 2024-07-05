@@ -30,7 +30,7 @@ jobs:
         if: ${{ always() && steps.compile.outcome == 'success' }}
         with:
           SOURCE_FILE: 'bin/Release_normal'
-          DEST_NAME: 'MCLawl'
+          DEST_NAME: 'MCSharp'
           NOTIFY_MESSAGE: 'Successfully compiled MCSharp .NET build.'
           WEBHOOK_URL: '${{ secrets.WEBHOOK_URL }}'
           
